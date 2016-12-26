@@ -326,17 +326,17 @@ phy.Set ("ChannelNumber", ns3::UintegerValue(13));
   address.Assign (curt6WestAPDevice);
 
 // emufd Interface
-  /*Ptr<Ipv4> ipv4 = wifiCurtNodes.Get(3)->GetObject<Ipv4> ();
+  Ptr<Ipv4> ipv4 = wifiCurtNodes.Get(3)->GetObject<Ipv4> ();
   uint32_t interface = ipv4->AddInterface (emuDevice.Get(0));
   Ipv4InterfaceAddress emuAddress = Ipv4InterfaceAddress (localIp, localMask);
   ipv4->AddAddress (interface, emuAddress);
   ipv4->SetMetric (interface, 1);
-  ipv4->SetUp (interface);*/
+  ipv4->SetUp (interface);
 
 // local and global routing
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
-/*  Ipv4Address gateway ("10.0.2.2");
+  /*Ipv4Address gateway ("10.0.2.2");
   Ipv4StaticRoutingHelper ipv4RoutingHelper;
   Ptr<Ipv4StaticRouting> staticRouting = ipv4RoutingHelper.GetStaticRouting (ipv4);
   staticRouting->SetDefaultRoute (gateway, interface);*/
@@ -369,13 +369,13 @@ phy.Set ("ChannelNumber", ns3::UintegerValue(13));
   echoClient.Install (wifiCliNodes.Get (0));
   clientApps.Start (Seconds (2.0));
   clientApps.Stop (Seconds (10.0));
-/*
+
   Ptr<V4Ping> app = CreateObject<V4Ping> ();
   app->SetAttribute ("Remote", Ipv4AddressValue (remoteIp));
   app->SetAttribute ("Verbose", BooleanValue (true) );
   wifiCliNodes.Get(0)->AddApplication (app);
   app->SetStartTime (Seconds (3.0));
-  app->SetStopTime (Seconds (21.0));*/
+  app->SetStopTime (Seconds (21.0));
 
   Simulator::Stop (Seconds (10.0));
 
