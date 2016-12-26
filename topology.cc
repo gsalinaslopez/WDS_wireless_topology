@@ -102,7 +102,7 @@ main (int argc, char *argv[])
 
 // Create Curts
   NodeContainer wifiCurtNodes;
-  wifiCurtNodes.Create (5);
+  wifiCurtNodes.Create (4);
 
 // Curt4 connected to csma
   NodeContainer wifiApNode = p2pNodes.Get (0);
@@ -138,8 +138,8 @@ main (int argc, char *argv[])
 
   YansWifiChannelHelper wdsChannel = YansWifiChannelHelper::Default ();
   YansWifiPhyHelper wdsPhy = YansWifiPhyHelper::Default ();
-  wdsPhy.SetChannel (wdsChannel.Create ());
-  wdsPhy.Set ("ChannelNumber", ns3::UintegerValue(6));
+  phy.SetChannel (wdsChannel.Create ());
+  phy.Set ("ChannelNumber", ns3::UintegerValue(6));
 
 // Curt0's east AP and Curt1's west AP
   Mac48Address curt0EastAPMAC = ns3::Mac48Address::Allocate();
@@ -147,23 +147,77 @@ main (int argc, char *argv[])
 
   wdsWifiMac.SetType("ns3::WDSWifiMac", "ReceiverAddress",
               Mac48AddressValue(curt1WestAPMAC));
-  NetDeviceContainer curt0EastAPDevice = wifi.Install(wdsPhy, wdsWifiMac, wifiCurtNodes.Get(0));
+  NetDeviceContainer curt0EastAPDevice = wifi.Install(phy, wdsWifiMac, wifiCurtNodes.Get(0));
   curt0EastAPDevice.Get(0)->SetAddress(curt0EastAPMAC);
 
   wdsWifiMac.SetType("ns3::WDSWifiMac", "ReceiverAddress",
               Mac48AddressValue(curt0EastAPMAC));
-  NetDeviceContainer curt1WestAPDevice = wifi.Install(wdsPhy, wdsWifiMac, wifiApNode);
+  NetDeviceContainer curt1WestAPDevice = wifi.Install(phy, wdsWifiMac, wifiCurtNodes.Get(1));
   curt1WestAPDevice.Get(0)->SetAddress(curt1WestAPMAC);
 
+// Curt1's east AP and Curt2's west AP
+YansWifiChannelHelper wds1Channel = YansWifiChannelHelper::Default ();
+YansWifiPhyHelper wds1Phy = YansWifiPhyHelper::Default ();
+phy.SetChannel (wds1Channel.Create ());
+phy.Set ("ChannelNumber", ns3::UintegerValue(1));
+
+  Mac48Address curt1EastAPMAC = ns3::Mac48Address::Allocate();
+  Mac48Address curt2WestAPMAC = ns3::Mac48Address::Allocate();
+
+  wdsWifiMac.SetType("ns3::WDSWifiMac", "ReceiverAddress",
+              Mac48AddressValue(curt2WestAPMAC));
+  NetDeviceContainer curt1EastAPDevice = wifi.Install(phy, wdsWifiMac, wifiCurtNodes.Get(1));
+  curt1EastAPDevice.Get(0)->SetAddress(curt1EastAPMAC);
+
+  wdsWifiMac.SetType("ns3::WDSWifiMac", "ReceiverAddress",
+              Mac48AddressValue(curt1EastAPMAC));
+  NetDeviceContainer curt2WestAPDevice = wifi.Install(phy, wdsWifiMac, wifiCurtNodes.Get(2));
+  curt2WestAPDevice.Get(0)->SetAddress(curt2WestAPMAC);
+
+// Curt2's east AP and Curt3's west AP
+YansWifiChannelHelper wds2Channel = YansWifiChannelHelper::Default ();
+YansWifiPhyHelper wds2Phy = YansWifiPhyHelper::Default ();
+phy.SetChannel (wds2Channel.Create ());
+phy.Set ("ChannelNumber", ns3::UintegerValue(9));
+  Mac48Address curt2EastAPMAC = ns3::Mac48Address::Allocate();
+  Mac48Address curt3WestAPMAC = ns3::Mac48Address::Allocate();
+
+  wdsWifiMac.SetType("ns3::WDSWifiMac", "ReceiverAddress",
+              Mac48AddressValue(curt3WestAPMAC));
+  NetDeviceContainer curt2EastAPDevice = wifi.Install(phy, wdsWifiMac, wifiCurtNodes.Get(2));
+  curt2EastAPDevice.Get(0)->SetAddress(curt2EastAPMAC);
+
+  wdsWifiMac.SetType("ns3::WDSWifiMac", "ReceiverAddress",
+              Mac48AddressValue(curt2EastAPMAC));
+  NetDeviceContainer curt3WestAPDevice = wifi.Install(phy, wdsWifiMac, wifiCurtNodes.Get(3));
+  curt3WestAPDevice.Get(0)->SetAddress(curt3WestAPMAC);
+
+// Curt3's east AP and Curt4's west AP
+YansWifiChannelHelper wds3Channel = YansWifiChannelHelper::Default ();
+YansWifiPhyHelper wds3Phy = YansWifiPhyHelper::Default ();
+phy.SetChannel (wds3Channel.Create ());
+phy.Set ("ChannelNumber", ns3::UintegerValue(13));
+  Mac48Address curt3EastAPMAC = ns3::Mac48Address::Allocate();
+  Mac48Address curt4WestAPMAC = ns3::Mac48Address::Allocate();
+
+  wdsWifiMac.SetType("ns3::WDSWifiMac", "ReceiverAddress",
+              Mac48AddressValue(curt4WestAPMAC));
+  NetDeviceContainer curt3EastAPDevice = wifi.Install(phy, wdsWifiMac, wifiCurtNodes.Get(3));
+  curt3EastAPDevice.Get(0)->SetAddress(curt3EastAPMAC);
+
+  wdsWifiMac.SetType("ns3::WDSWifiMac", "ReceiverAddress",
+              Mac48AddressValue(curt3EastAPMAC));
+  NetDeviceContainer curt4WestAPDevice = wifi.Install(phy, wdsWifiMac, wifiApNode);
+  curt4WestAPDevice.Get(0)->SetAddress(curt4WestAPMAC);
 
   MobilityHelper mobility;
 
   mobility.SetPositionAllocator ("ns3::GridPositionAllocator",
                                  "MinX", DoubleValue (0.0),
                                  "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (5.0),
-                                 "DeltaY", DoubleValue (10.0),
-                                 "GridWidth", UintegerValue (3),
+                                 "DeltaX", DoubleValue (15.0),
+                                 "DeltaY", DoubleValue (20.0),
+                                 "GridWidth", UintegerValue (6),
                                  "LayoutType", StringValue ("RowFirst"));
 
   mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
@@ -191,12 +245,52 @@ main (int argc, char *argv[])
   csmaInterfaces = address.Assign (csmaDevices);
 
   address.SetBase ("10.1.3.0", "255.255.255.0");
+  //address.Assign (cliDevices);
+  //address.Assign (curtDevices);
+  address.SetBase ("10.10.10.0", "255.255.255.0");
   address.Assign (cliDevices);
   address.Assign (curtDevices);
+
+  /*Ptr<Ipv4> ipv4MN = wifiCliNodes.Get(0)->GetObject<Ipv4> ();
+  uint32_t ifIndex1 = ipv4MN->AddInterface (cliDevices.Get(0));
+  ipv4MN->AddAddress (ifIndex1, Ipv4InterfaceAddress (Ipv4Address ("0.0.0.0"),
+                      Ipv4Mask ("/0")));
+  ipv4MN->SetForwarding(ifIndex1, true);
+  ipv4MN->SetUp (ifIndex1);*/
+
+  Ptr<Ipv4> ipv4Router = wifiCurtNodes.Get(0)->GetObject<Ipv4> ();
+  uint32_t ifIndex = ipv4Router->AddInterface (curtDevices.Get(0));
+  //ipv4Router->AddAddress (ifIndex, Ipv4InterfaceAddress (Ipv4Address ("10.1.3.1"), Ipv4Mask ("/0"))); //workaround (to support undirected broadcast in ns-3.12.1)!!!!!
+  ipv4Router->AddAddress (ifIndex, Ipv4InterfaceAddress (Ipv4Address ("10.1.3.1"), Ipv4Mask ("/24")));
+  ipv4Router->SetForwarding(ifIndex, true);
+  ipv4Router->SetUp (ifIndex);
 
   address.SetBase ("10.1.4.0", "255.255.255.0");
   address.Assign (curt0EastAPDevice);
   address.Assign (curt1WestAPDevice);
+  address.SetBase ("10.1.5.0", "255.255.255.0");
+  address.Assign (curt1EastAPDevice);
+  address.Assign (curt2WestAPDevice);
+  address.SetBase ("10.1.6.0", "255.255.255.0");
+  address.Assign (curt2EastAPDevice);
+  address.Assign (curt3WestAPDevice);
+  address.SetBase ("10.1.7.0", "255.255.255.0");
+  address.Assign (curt3EastAPDevice);
+  address.Assign (curt4WestAPDevice);
+
+  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+
+  uint16_t dhcp_port = 67;
+  DhcpServerHelper dhcp_server(Ipv4Address("10.1.3.0"), Ipv4Mask("/24"),
+                                Ipv4Address("10.1.3.1"), dhcp_port);
+  ApplicationContainer apDhcpServer = dhcp_server.Install(wifiCurtNodes.Get(0));
+  apDhcpServer.Start (Seconds(1.0));
+  apDhcpServer.Stop (Seconds(10.0));
+
+  DhcpClientHelper dhcp_client(dhcp_port);
+  ApplicationContainer apDhcpClient = dhcp_client.Install(wifiCliNodes.Get(0));
+  apDhcpClient.Start (Seconds(1.0));
+  apDhcpClient.Stop (Seconds(10.0));
 
   UdpEchoServerHelper echoServer (9);
 
@@ -211,18 +305,18 @@ main (int argc, char *argv[])
 
   ApplicationContainer clientApps =
   echoClient.Install (wifiCliNodes.Get (0));
-  clientApps.Start (Seconds (2.0));
+  clientApps.Start (Seconds (5.0));
   clientApps.Stop (Seconds (10.0));
 
-  Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
+
 
   Simulator::Stop (Seconds (10.0));
 
   if (tracing == true)
     {
-      pointToPoint.EnablePcapAll ("third");
+      //pointToPoint.EnablePcapAll ("third");
       phy.EnablePcap ("third", curtDevices.Get (0));
-      csma.EnablePcap ("third", csmaDevices.Get (0), true);
+      //csma.EnablePcap ("third", csmaDevices.Get (0), true);
     }
 
   Simulator::Run ();
