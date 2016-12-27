@@ -25,7 +25,7 @@
 #include "ns3/internet-module.h"
 #include "ns3/mac48-address.h"
 #include "ns3/uinteger.h"
-
+#include "ns3/ipv4.h"
 #include "ns3/fd-net-device-module.h"
 #include "ns3/ipv4-static-routing-helper.h"
 #include "ns3/ipv4-list-routing-helper.h"
@@ -267,7 +267,7 @@ phy.Set ("ChannelNumber", ns3::UintegerValue(13));
   mobility.Install (wifiApNode);
 
 // install rawsocket file descriptor for access to the InternetStackHelper
-  std::string deviceName ("enp0s3");
+/*  std::string deviceName ("enp0s3");
   std::string remote ("93.184.216.34");
   Ipv4Address remoteIp (remote.c_str ());
   Ipv4Address localIp ("10.0.2.20");
@@ -278,7 +278,7 @@ phy.Set ("ChannelNumber", ns3::UintegerValue(13));
   emu.SetDeviceName (deviceName);
   NetDeviceContainer emuDevice = emu.Install (wifiCurtNodes.Get(3));
   emuDevice.Get(0)->SetAttribute("Address", Mac48AddressValue (
-                                  Mac48Address::Allocate ()));
+                                  Mac48Address::Allocate ()));*/
 
   InternetStackHelper stack;
   stack.Install (csmaNodes);
@@ -296,15 +296,16 @@ phy.Set ("ChannelNumber", ns3::UintegerValue(13));
   Ipv4InterfaceContainer csmaInterfaces;
   csmaInterfaces = address.Assign (csmaDevices);
 
-  address.SetBase ("10.1.3.0", "255.255.255.0");
-  address.Assign (cliDevices);
+  address.SetBase ("10.10.3.0", "255.255.255.0");
+  Ipv4InterfaceContainer cliInterfaces;
+//  cliInterfaces = address.Assign (cliDevices);
   address.Assign (curtDevices);
-
-  /*Ptr<Ipv4> ipv4Router = wifiCurtNodes.Get(0)->GetObject<Ipv4> ();
+   cliInterfaces = address.Assign (cliDevices);
+  Ptr<Ipv4> ipv4Router = wifiCurtNodes.Get(0)->GetObject<Ipv4> ();
   uint32_t ifIndex = ipv4Router->AddInterface (curtDevices.Get(0));
   ipv4Router->AddAddress (ifIndex, Ipv4InterfaceAddress (Ipv4Address ("10.1.3.1"), Ipv4Mask ("/24")));
   ipv4Router->SetForwarding(ifIndex, true);
-  ipv4Router->SetUp (ifIndex);*/
+  ipv4Router->SetUp (ifIndex);
 
   address.SetBase ("10.1.4.0", "255.255.255.0");
   address.Assign (curt0EastAPDevice);
@@ -326,23 +327,27 @@ phy.Set ("ChannelNumber", ns3::UintegerValue(13));
   address.Assign (curt6WestAPDevice);
 
 // emufd Interface
-  Ptr<Ipv4> ipv4 = wifiCurtNodes.Get(3)->GetObject<Ipv4> ();
+  /*Ptr<Ipv4> ipv4 = wifiCurtNodes.Get(3)->GetObject<Ipv4> ();
   uint32_t interface = ipv4->AddInterface (emuDevice.Get(0));
   Ipv4InterfaceAddress emuAddress = Ipv4InterfaceAddress (localIp, localMask);
   ipv4->AddAddress (interface, emuAddress);
   ipv4->SetMetric (interface, 1);
-  ipv4->SetUp (interface);
+  ipv4->SetUp (interface);*/
 
 // local and global routing
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
   /*Ipv4Address gateway ("10.0.2.2");
+  Ipv4Address cart3 ("10.1.3.2");
   Ipv4StaticRoutingHelper ipv4RoutingHelper;
   Ptr<Ipv4StaticRouting> staticRouting = ipv4RoutingHelper.GetStaticRouting (ipv4);
+  Ptr<Ipv4> ipv41 = wifiCliNodes.Get(0)->GetObject<Ipv4> ();
+  staticRouting->SetDefaultRoute (gateway,
+                    ipv41->GetInterfaceForDevice(cliDevices.Get(0)));
   staticRouting->SetDefaultRoute (gateway, interface);*/
 
 // Appliation creation
-  /*uint16_t dhcp_port = 67;
+  uint16_t dhcp_port = 67;
   DhcpServerHelper dhcp_server(Ipv4Address("10.1.3.0"), Ipv4Mask("/24"),
                                 Ipv4Address("10.1.3.1"), dhcp_port);
   ApplicationContainer apDhcpServer = dhcp_server.Install(wifiCurtNodes.Get(0));
@@ -352,7 +357,7 @@ phy.Set ("ChannelNumber", ns3::UintegerValue(13));
   DhcpClientHelper dhcp_client(dhcp_port);
   ApplicationContainer apDhcpClient = dhcp_client.Install(wifiCliNodes.Get(0));
   apDhcpClient.Start (Seconds(1.0));
-  apDhcpClient.Stop (Seconds(10.0));*/
+  apDhcpClient.Stop (Seconds(10.0));
 
   UdpEchoServerHelper echoServer (9);
 
@@ -370,12 +375,12 @@ phy.Set ("ChannelNumber", ns3::UintegerValue(13));
   clientApps.Start (Seconds (2.0));
   clientApps.Stop (Seconds (10.0));
 
-  Ptr<V4Ping> app = CreateObject<V4Ping> ();
+/*  Ptr<V4Ping> app = CreateObject<V4Ping> ();
   app->SetAttribute ("Remote", Ipv4AddressValue (remoteIp));
   app->SetAttribute ("Verbose", BooleanValue (true) );
   wifiCliNodes.Get(0)->AddApplication (app);
   app->SetStartTime (Seconds (3.0));
-  app->SetStopTime (Seconds (21.0));
+  app->SetStopTime (Seconds (21.0));*/
 
   Simulator::Stop (Seconds (10.0));
 
